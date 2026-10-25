@@ -10,9 +10,19 @@
 
 // Kerakli kutubxona va modullarni yuklash
 require('dotenv').config();
+const http = require('http');
 const { Telegraf, Scenes, session, Markup } = require('telegraf');
 const { WizardScene, Stage } = Scenes;
 const db = require('./database');
+
+// Render va bulutli hostinglar uchun Health-Check web-server
+const PORT = process.env.PORT || 3000;
+http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Telegram Bot muvaffaqiyatli ishlab turibdi!');
+}).listen(PORT, () => {
+    console.log(`🌐 Web-server port ${PORT} da faol`);
+});
 
 // 1. Muhit o'zgaruvchilarini tekshirish
 const RAW_BOT_TOKEN = process.env.BOT_TOKEN;
