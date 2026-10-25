@@ -24,6 +24,19 @@ http.createServer((req, res) => {
     console.log(`🌐 Web-server port ${PORT} da faol`);
 });
 
+// Render serveri uyquga ketib qolmasligi uchun avtomatik Keep-Alive ping
+const https = require('https');
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL || 'https://sardorning-sotuv-boti.onrender.com';
+if (process.env.RENDER || process.env.NODE_ENV === 'production') {
+    setInterval(() => {
+        https.get(RENDER_URL, (res) => {
+            console.log(`⏱️ Keep-alive ping yuborildi (Status: ${res.statusCode})`);
+        }).on('error', (err) => {
+            console.warn('⚠️ Keep-alive ping xatosi:', err.message);
+        });
+    }, 8 * 60 * 1000); // Har 8 daqiqada (Render 15 daqiqada uxlaydi)
+}
+
 // 1. Muhit o'zgaruvchilarini tekshirish
 const RAW_BOT_TOKEN = process.env.BOT_TOKEN;
 const BOT_TOKEN = RAW_BOT_TOKEN ? RAW_BOT_TOKEN.trim().replace(/:+$/, '') : '';
